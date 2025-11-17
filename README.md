@@ -54,6 +54,10 @@ Unit conversions:
 4. Run `flutter run` to start the app
 
 ## Screenshots
+<img width="434" height="974" alt="image" src="https://github.com/user-attachments/assets/988825c4-cb9f-4376-8258-a4c23d0e7024" />
+<img width="465" height="982" alt="image" src="https://github.com/user-attachments/assets/306466aa-7831-4a54-8bc2-78a1288a7ae5" />
+<img width="439" height="995" alt="image" src="https://github.com/user-attachments/assets/38cc07a2-a8bd-495f-972b-a2b92d97f85f" />
+
 
 
 
