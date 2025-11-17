@@ -55,20 +55,8 @@ Unit conversions:
 
 ## Screenshots
 
-![BMI Calculator Screenshot](screenshots/bmi_calculator.png)
 
-*Note: The screenshot shows the main interface of the BMI calculator.*
 
-## APK
-
-An APK file is not included in this repository. To build an APK, follow these steps:
-
-1. Ensure you have set up your Android signing configuration.
-2. Run the following command:
-   ```
-   flutter build apk
-   ```
-3. The APK will be generated in `build/app/outputs/flutter-apk/app-release.apk`.
 
 ## Hints for developers
 
@@ -81,3 +69,4 @@ An APK file is not included in this repository. To build an APK, follow these st
 - 70 kg, 170 cm → BMI ≈ 24.2, Normal (Green)
 - 155 lb, 5′7″ → BMI ≈ 24.3, Normal (Green)  
 - 95 kg, 165 cm → BMI ≈ 34.9, Obese (Red)
+
