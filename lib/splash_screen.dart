@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashScreen extends StatefulWidget {
   final Widget nextScreen;
@@ -57,17 +58,12 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: const Icon(
-                    Icons.monitor_weight_rounded,
-                    size: 64,
-                    color: Color(0xFFd5ff5f),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: SvgPicture.asset(
+                    'assets/svgviewer-output.svg',
+                    width: 150,
+                    height: 150,
                   ),
                 ),
                 const SizedBox(height: 24),

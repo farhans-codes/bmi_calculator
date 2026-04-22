@@ -3,6 +3,7 @@ import 'package:bmi_calculator/bmi_utils.dart';
 import 'package:bmi_calculator/privacy_policy_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class BMICalculatorScreen extends StatefulWidget {
   final VoidCallback onThemeToggle;
@@ -172,17 +173,12 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Icon(
-                      Icons.monitor_weight_rounded,
-                      size: 36,
-                      color: Color(0xFFd5ff5f),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: SvgPicture.asset(
+                      'assets/svgviewer-output.svg',
+                      width: 64,
+                      height: 64,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -252,17 +248,12 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                   context: context,
                   applicationName: 'BMI Calculator',
                   applicationVersion: '1.0.0',
-                  applicationIcon: Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.monitor_weight_rounded,
-                      size: 28,
-                      color: Color(0xFFd5ff5f),
+                  applicationIcon: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SvgPicture.asset(
+                      'assets/svgviewer-output.svg',
+                      width: 48,
+                      height: 48,
                     ),
                   ),
                   children: const [
@@ -309,12 +300,12 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: SizedBox(
-                    height: 48,
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    flex: 3,
                     child: TextField(
                       controller: _weightController,
                       keyboardType: TextInputType.numberWithOptions(
@@ -333,24 +324,24 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  flex: 2,
-                  child: SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'kg', label: Text('kg')),
-                      ButtonSegment(value: 'lb', label: Text('lb')),
-                    ],
-                    selected: {_weightUnit},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      setState(() {
-                        _weightUnit = newSelection.first;
-                      });
-                    },
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 2,
+                    child: SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'kg', label: Text('kg')),
+                        ButtonSegment(value: 'lb', label: Text('lb')),
+                      ],
+                      selected: {_weightUnit},
+                      onSelectionChanged: (Set<String> newSelection) {
+                        setState(() {
+                          _weightUnit = newSelection.first;
+                        });
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 20),
 
