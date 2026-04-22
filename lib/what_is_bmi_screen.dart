@@ -34,7 +34,7 @@ class WhatIsBMIScreen extends StatelessWidget {
                           color: AppTheme.primaryColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(Icons.info_outline, color: AppTheme.primaryColor, size: 28),
+                        child: Icon(Icons.info_outline, color: isDark ? AppTheme.primaryColor : Colors.black, size: 28),
                       ),
                       const SizedBox(width: 12),
                       Expanded(

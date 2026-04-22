@@ -219,6 +219,33 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
+              leading: Icon(Icons.menu_book_rounded, color: Theme.of(context).iconTheme.color ?? Colors.white),
+              title: const Text('What is BMI?'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const WhatIsBMIScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: SvgPicture.asset('assets/about.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
+              title: const Text('About App'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AboutScreen(),
+                  ),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
               leading: SvgPicture.asset('assets/privacy.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
               title: const Text('Privacy Policy'),
               onTap: () {
@@ -252,33 +279,6 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                     'https://play.google.com/store/apps/details?id=com.farhan.bmicalculator',
                   ),
                   mode: LaunchMode.externalApplication,
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.menu_book_rounded, color: Theme.of(context).iconTheme.color ?? Colors.white),
-              title: const Text('What is BMI?'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const WhatIsBMIScreen(),
-                  ),
-                );
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: SvgPicture.asset('assets/about.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
-              title: const Text('About App'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AboutScreen(),
-                  ),
                 );
               },
             ),

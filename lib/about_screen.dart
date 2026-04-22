@@ -7,9 +7,7 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('About App'),
-      ),
+      appBar: AppBar(title: const Text('About App')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
