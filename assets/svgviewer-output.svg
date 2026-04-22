@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- White Background -->
+  <rect width="512" height="512" fill="#ffffff" />
+  <!-- Background Square with rounded corners -->
+  <rect x="36" y="36" width="440" height="440" rx="40" ry="40" fill="#f4fcd9" />
+
+  <!-- Gauge Track (4 Segments) -->
+  <g>
+    <!-- Segment 1: Darkest green -->
+    <path d="M 146 280 L 66 280 A 190 190 0 0 1 121.65 145.65 L 178.22 202.22 A 110 110 0 0 0 146 280 Z" fill="#7aad1a" />
+    <circle cx="106" cy="280" r="40" fill="#7aad1a" />
+
+    <!-- Segment 2: Medium green -->
+    <path d="M 178.22 202.22 L 121.65 145.65 A 190 190 0 0 1 256 90 L 256 170 A 110 110 0 0 0 178.22 202.22 Z" fill="#a8d93a" />
+
+    <!-- Segment 3: Primary Color (#d5ff5f) -->
+    <path d="M 256 170 L 256 90 A 190 190 0 0 1 390.35 145.65 L 333.78 202.22 A 110 110 0 0 0 256 170 Z" fill="#d5ff5f" />
+
+    <!-- Segment 4: Light lime -->
+    <path d="M 333.78 202.22 L 390.35 145.65 A 190 190 0 0 1 446 280 L 366 280 A 110 110 0 0 0 333.78 202.22 Z" fill="#e8ff99" />
+    <circle cx="406" cy="280" r="40" fill="#e8ff99" />
+  </g>
+
+  <!-- Needle Pointer -->
+  <path d="M 230 280 L 325 130 A 10 10 0 0 1 340 140 L 282 280 A 26 26 0 1 1 230 280 Z" fill="#1a1a1a" />
+
+  <!-- Text "BMI" -->
+  <g stroke="#1a1a1a" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Letter B -->
+    <path d="M 140 340 L 140 430" />
+    <path d="M 140 340 L 165 340 A 22.5 22.5 0 0 1 187.5 362.5 A 22.5 22.5 0 0 1 165 385 L 140 385" />
+    <path d="M 140 385 L 170 385 A 22.5 22.5 0 0 1 192.5 407.5 A 22.5 22.5 0 0 1 170 430 L 140 430" />
+
+    <!-- Letter M -->
+    <path d="M 220 430 L 220 340 L 256 385 L 292 340 L 292 430" />
+
+    <!-- Letter I -->
+    <path d="M 326 340 L 366 340" />
+    <path d="M 326 430 L 366 430" />
+    <path d="M 346 340 L 346 430" />
+  </g>
+</svg>
