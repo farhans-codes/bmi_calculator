@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:bmi_calculator/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
   final Widget nextScreen;
@@ -49,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFd5ff5f),
+      backgroundColor: AppTheme.primaryColor,
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
