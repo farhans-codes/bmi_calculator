@@ -227,14 +227,24 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               children: [
                 Expanded(
                   flex: 3,
-                  child: TextField(
-                    controller: _weightController,
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    decoration: const InputDecoration(
-                      labelText: 'Enter weight',
-                      border: OutlineInputBorder(),
+                  child: SizedBox(
+                    height: 48,
+                    child: TextField(
+                      controller: _weightController,
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      style: const TextStyle(fontSize: 14),
+                      decoration: InputDecoration(
+                        labelText: 'Enter weight',
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -278,48 +288,88 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
             ),
             const SizedBox(height: 10),
             if (_heightUnit == 'm') ...[
-              TextField(
-                controller: _heightMeterController,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Enter height in meters',
-                  border: OutlineInputBorder(),
+              SizedBox(
+                height: 48,
+                child: TextField(
+                  controller: _heightMeterController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  style: const TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    labelText: 'Enter height in meters',
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
                 ),
               ),
             ] else if (_heightUnit == 'cm') ...[
-              TextField(
-                controller: _heightCmController,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Enter height in centimeters',
-                  border: OutlineInputBorder(),
+              SizedBox(
+                height: 48,
+                child: TextField(
+                  controller: _heightCmController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  style: const TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    labelText: 'Enter height in centimeters',
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
                 ),
               ),
             ] else ...[
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _heightFeetController,
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: const InputDecoration(
-                        labelText: 'Feet',
-                        border: OutlineInputBorder(),
+                    child: SizedBox(
+                      height: 48,
+                      child: TextField(
+                        controller: _heightFeetController,
+                        keyboardType: TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          labelText: 'Feet',
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: TextField(
-                      controller: _heightInchController,
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: const InputDecoration(
-                        labelText: 'Inches',
-                        border: OutlineInputBorder(),
+                    child: SizedBox(
+                      height: 48,
+                      child: TextField(
+                        controller: _heightInchController,
+                        keyboardType: TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          labelText: 'Inches',
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -333,7 +383,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(30),
                 ),
               ),
               child: const Text(
@@ -345,6 +395,12 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
 
             OutlinedButton(
               onPressed: _clearAll,
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
               child: const Text('Clear All'),
             ),
             const SizedBox(height: 30),
