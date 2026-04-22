@@ -233,7 +233,9 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               onTap: () {
                 Navigator.pop(context);
                 launchUrl(
-                  Uri.parse('https://play.google.com/store/apps/details?id=com.farhan.bmicalculator'),
+                  Uri.parse(
+                    'https://play.google.com/store/apps/details?id=com.farhan.bmicalculator',
+                  ),
                   mode: LaunchMode.externalApplication,
                 );
               },
