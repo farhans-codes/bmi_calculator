@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bmi_calculator/bmi_utils.dart';
 import 'package:bmi_calculator/privacy_policy_screen.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BMICalculatorScreen extends StatefulWidget {
   final VoidCallback onThemeToggle;
@@ -223,10 +225,9 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               title: const Text('Share App'),
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Share link will be available after Play Store launch!'),
-                  ),
+                Share.share(
+                  'Check out BMI Calculator - a simple app to calculate your Body Mass Index!\n\nhttps://play.google.com/store/apps/details?id=com.farhan.bmicalculator',
+                  subject: 'BMI Calculator App',
                 );
               },
             ),
@@ -235,10 +236,9 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               title: const Text('Rate Us'),
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Rating link will be available after Play Store launch!'),
-                  ),
+                launchUrl(
+                  Uri.parse('https://play.google.com/store/apps/details?id=com.farhan.bmicalculator'),
+                  mode: LaunchMode.externalApplication,
                 );
               },
             ),
