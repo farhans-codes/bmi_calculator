@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bmi_calculator/app_theme.dart';
 import 'package:bmi_calculator/bmi_utils.dart';
 import 'package:bmi_calculator/privacy_policy_screen.dart';
 import 'package:share_plus/share_plus.dart';
@@ -168,7 +169,11 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppTheme.darkSurfaceColor
+                    : Theme.of(context).primaryColor,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -182,18 +187,25 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'BMI Calculator',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppTheme.primaryColor
+                          : Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'v1.0.0',
-                    style: TextStyle(color: Colors.black54, fontSize: 14),
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppTheme.primaryColor.withValues(alpha: 0.7)
+                          : Colors.black54,
+                      fontSize: 14,
+                    ),
                   ),
                 ],
               ),

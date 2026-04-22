@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static const Color primaryColor = Color(0xFFd5ff5f);
+  static Color? darkSurfaceColor = Colors.grey[850];
 
   static final ThemeData lightTheme = ThemeData(
     primaryColor: primaryColor,
@@ -56,8 +57,8 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.black,
+        backgroundColor: darkSurfaceColor,
+        foregroundColor: primaryColor,
         textStyle: const TextStyle(fontWeight: FontWeight.bold),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -65,7 +66,7 @@ class AppTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: primaryColor,
-        side: BorderSide(color: primaryColor),
+        side: BorderSide(color: darkSurfaceColor ?? Colors.grey),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     ),
