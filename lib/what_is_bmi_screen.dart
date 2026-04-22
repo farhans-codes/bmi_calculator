@@ -31,7 +31,7 @@ class WhatIsBMIScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                          color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(Icons.info_outline, color: isDark ? AppTheme.primaryColor : Colors.black, size: 28),
@@ -78,7 +78,7 @@ class WhatIsBMIScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryColor,
+                            color: isDark ? AppTheme.primaryColor : Colors.black,
                           ),
                         ),
                       ],
@@ -486,10 +486,10 @@ class WhatIsBMIScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.15),
+              color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: AppTheme.primaryColor, size: 22),
+            child: Icon(icon, color: isDark ? AppTheme.primaryColor : Colors.black87, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
