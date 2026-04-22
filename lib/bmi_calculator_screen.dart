@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bmi_calculator/app_theme.dart';
 import 'package:bmi_calculator/bmi_utils.dart';
+import 'package:bmi_calculator/about_screen.dart';
 import 'package:bmi_calculator/privacy_policy_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -258,23 +259,11 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               title: const Text('About'),
               onTap: () {
                 Navigator.pop(context);
-                showAboutDialog(
-                  context: context,
-                  applicationName: 'BMI Calculator',
-                  applicationVersion: '1.0.0',
-                  applicationIcon: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: SvgPicture.asset(
-                      'assets/svgviewer-output.svg',
-                      width: 48,
-                      height: 48,
-                    ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AboutScreen(),
                   ),
-                  children: const [
-                    Text(
-                      'A simple and accurate BMI Calculator app to help you track your body mass index and maintain a healthy lifestyle.',
-                    ),
-                  ],
                 );
               },
             ),
