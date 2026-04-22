@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bmi_calculator/app_theme.dart';
 import 'package:bmi_calculator/bmi_calculator_screen.dart';
+import 'package:bmi_calculator/splash_screen.dart';
 
 void main() {
   runApp(const BMICalculatorApp());
@@ -29,7 +30,9 @@ class _BMICalculatorAppState extends State<BMICalculatorApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: BMICalculatorScreen(onThemeToggle: _toggleTheme),
+      home: SplashScreen(
+        nextScreen: BMICalculatorScreen(onThemeToggle: _toggleTheme),
+      ),
       debugShowCheckedModeBanner: false,
     );
   }

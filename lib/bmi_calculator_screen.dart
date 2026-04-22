@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bmi_calculator/bmi_utils.dart';
+import 'package:bmi_calculator/privacy_policy_screen.dart';
 
 class BMICalculatorScreen extends StatefulWidget {
   final VoidCallback onThemeToggle;
@@ -165,13 +166,25 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FlutterLogo(size: 48),
-                  SizedBox(height: 8),
-                  Text(
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.monitor_weight_rounded,
+                      size: 36,
+                      color: Color(0xFFd5ff5f),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
                     'BMI Calculator',
                     style: TextStyle(
                       color: Colors.black,
@@ -179,13 +192,86 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Text(
+                  const SizedBox(height: 4),
+                  const Text(
                     'v1.0.0',
                     style: TextStyle(color: Colors.black54, fontSize: 14),
                   ),
                 ],
               ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.privacy_tip),
+              title: const Text('Privacy Policy'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const PrivacyPolicyScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: const Text('Share App'),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Share link will be available after Play Store launch!'),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.star_rate),
+              title: const Text('Rate Us'),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Rating link will be available after Play Store launch!'),
+                  ),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About'),
+              onTap: () {
+                Navigator.pop(context);
+                showAboutDialog(
+                  context: context,
+                  applicationName: 'BMI Calculator',
+                  applicationVersion: '1.0.0',
+                  applicationIcon: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.monitor_weight_rounded,
+                      size: 28,
+                      color: Color(0xFFd5ff5f),
+                    ),
+                  ),
+                  children: const [
+                    Text(
+                      'A simple and accurate BMI Calculator app to help you track your body mass index and maintain a healthy lifestyle.',
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
