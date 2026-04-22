@@ -211,12 +211,12 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home),
+              leading: SvgPicture.asset('assets/home.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
               title: const Text('Home'),
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
-              leading: const Icon(Icons.privacy_tip),
+              leading: SvgPicture.asset('assets/privacy.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
               title: const Text('Privacy Policy'),
               onTap: () {
                 Navigator.pop(context);
@@ -229,7 +229,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.share),
+              leading: SvgPicture.asset('assets/share.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
               title: const Text('Share App'),
               onTap: () {
                 Navigator.pop(context);
@@ -240,7 +240,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.star_rate),
+              leading: SvgPicture.asset('assets/star.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
               title: const Text('Rate Us'),
               onTap: () {
                 Navigator.pop(context);
@@ -254,7 +254,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
             ),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.info_outline),
+              leading: SvgPicture.asset('assets/about.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
               title: const Text('About'),
               onTap: () {
                 Navigator.pop(context);
@@ -284,7 +284,15 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
       appBar: AppBar(
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
+            icon: SvgPicture.asset(
+              'assets/menu.svg',
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).iconTheme.color ?? Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
@@ -295,10 +303,16 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(
+            icon: SvgPicture.asset(
               Theme.of(context).brightness == Brightness.dark
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
+                  ? 'assets/sun.svg'
+                  : 'assets/moon.svg',
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).iconTheme.color ?? Colors.white,
+                BlendMode.srcIn,
+              ),
             ),
             onPressed: widget.onThemeToggle,
           ),

@@ -63,6 +63,14 @@ flutter:
   assets:
     - assets/play_store_512.png
     - assets/svgviewer-output.svg
+    - assets/menu.svg
+    - assets/moon.svg
+    - assets/sun.svg
+    - assets/home.svg
+    - assets/privacy.svg
+    - assets/share.svg
+    - assets/star.svg
+    - assets/about.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
