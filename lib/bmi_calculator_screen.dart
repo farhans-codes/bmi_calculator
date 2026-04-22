@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:bmi_calculator/app_theme.dart';
 import 'package:bmi_calculator/bmi_utils.dart';
 import 'package:bmi_calculator/about_screen.dart';
+import 'package:bmi_calculator/about_us_screen.dart';
+import 'package:bmi_calculator/what_is_bmi_screen.dart';
 import 'package:bmi_calculator/privacy_policy_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -253,16 +255,42 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                 );
               },
             ),
+            ListTile(
+              leading: Icon(Icons.menu_book_rounded, color: Theme.of(context).iconTheme.color ?? Colors.white),
+              title: const Text('What is BMI?'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const WhatIsBMIScreen(),
+                  ),
+                );
+              },
+            ),
             const Divider(),
             ListTile(
               leading: SvgPicture.asset('assets/about.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
-              title: const Text('About'),
+              title: const Text('About App'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => const AboutScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.group_outlined, color: Theme.of(context).iconTheme.color ?? Colors.white),
+              title: const Text('About Us'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AboutUsScreen(),
                   ),
                 );
               },
