@@ -33,6 +33,9 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
   Color _categoryColor = Colors.grey;
 
   void _calculateBMI() {
+    // Keyboard dismiss করো এবং সব input field unfocus করো
+    FocusScope.of(context).unfocus();
+
     setState(() {
       _bmi = null;
       _category = '';
@@ -310,7 +313,10 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                 BlendMode.srcIn,
               ),
             ),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+            onPressed: () {
+                FocusScope.of(context).unfocus();
+                Scaffold.of(context).openDrawer();
+              },
           ),
         ),
         title: const Text(
@@ -335,7 +341,10 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -587,6 +596,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 
