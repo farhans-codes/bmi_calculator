@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:bmi_calculator/app_theme.dart';
 import 'package:bmi_calculator/bmi_calculator_screen.dart';
-import 'package:bmi_calculator/splash_screen.dart';
 
-void main() {
+void main() async {
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  // Splash screen 1 second show korbe
+  await Future.delayed(const Duration(milliseconds: 1000));
+
+  FlutterNativeSplash.remove();
   runApp(const BMICalculatorApp());
 }
 
@@ -30,9 +37,7 @@ class _BMICalculatorAppState extends State<BMICalculatorApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: SplashScreen(
-        nextScreen: BMICalculatorScreen(onThemeToggle: _toggleTheme),
-      ),
+      home: BMICalculatorScreen(onThemeToggle: _toggleTheme),
       debugShowCheckedModeBanner: false,
     );
   }
