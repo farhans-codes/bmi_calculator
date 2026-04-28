@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:bmi_calculator/app_theme.dart';
 import 'package:bmi_calculator/bmi_calculator_screen.dart';
 
 void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  await Firebase.initializeApp();
 
   // Splash screen 1 second show korbe
   await Future.delayed(const Duration(milliseconds: 1000));

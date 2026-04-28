@@ -5,9 +5,13 @@ import 'package:bmi_calculator/about_screen.dart';
 import 'package:bmi_calculator/about_us_screen.dart';
 import 'package:bmi_calculator/what_is_bmi_screen.dart';
 import 'package:bmi_calculator/privacy_policy_screen.dart';
+import 'package:bmi_calculator/auth_service.dart';
+import 'package:bmi_calculator/firestore_service.dart';
+import 'package:bmi_calculator/profile_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class BMICalculatorScreen extends StatefulWidget {
   final VoidCallback onThemeToggle;
@@ -38,9 +42,16 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
   String _category = '';
   Color _categoryColor = Colors.grey;
 
+  User? _currentUser;
+
   @override
   void initState() {
     super.initState();
+    // Listen to auth state
+    AuthService.userStream.listen((user) {
+      if (mounted) setState(() => _currentUser = user);
+    });
+
     // Weight focus হারালে red border সরাও
     _weightFocusNode.addListener(() {
       if (!_weightFocusNode.hasFocus && _weightHasError) {
@@ -203,6 +214,30 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
           _categoryColor = Colors.grey;
       }
     });
+
+    // Save to Firestore if user is logged in
+    if (_currentUser != null) {
+      double displayHeight;
+      String displayHeightUnit;
+      if (_heightUnit == 'm') {
+        displayHeight = double.tryParse(_heightMeterController.text) ?? 0;
+        displayHeightUnit = 'm';
+      } else if (_heightUnit == 'cm') {
+        displayHeight = double.tryParse(_heightCmController.text) ?? 0;
+        displayHeightUnit = 'cm';
+      } else {
+        displayHeight = double.tryParse(_heightFeetController.text) ?? 0;
+        displayHeightUnit = 'ft';
+      }
+      FirestoreService.saveRecord(
+        bmi: _bmi!,
+        weight: weight,
+        weightUnit: _weightUnit,
+        height: displayHeight,
+        heightUnit: displayHeightUnit,
+        category: _category,
+      );
+    }
   }
 
   void _showError(String message) {
@@ -362,49 +397,89 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                 ],
               ),
             ),
-            // ── Sign In pinned at the very bottom ─────────────
+
+            // ── Sign In / User info pinned at the very bottom ──
             const Divider(height: 1),
             SafeArea(
               top: false,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: ListTile(
-                leading: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF2A2A2A)
-                        : const Color(0xFFE8F0E9),
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1.5,
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(6),
-                  child: SvgPicture.asset(
-                    'assets/user_avatar.svg',
-                    colorFilter: const ColorFilter.mode(
-                      Colors.black,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
-                title: const Text(
-                  'Sign In',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  // TODO: Navigate to Sign In screen
-                },
+                child: _currentUser != null
+                    // Logged in → tap goes to ProfileScreen
+                    ? ListTile(
+                        leading: CircleAvatar(
+                          radius: 20,
+                          backgroundImage: _currentUser!.photoURL != null
+                              ? NetworkImage(_currentUser!.photoURL!)
+                              : null,
+                          child: _currentUser!.photoURL == null
+                              ? const Icon(Icons.person)
+                              : null,
+                        ),
+                        title: const Text(
+                          'Profile',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: Text(
+                          _currentUser!.email ?? '',
+                          style: const TextStyle(fontSize: 11),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const ProfileScreen()),
+                          );
+                        },
+                      )
+                    : ListTile(
+                        leading: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF2A2A2A)
+                                : const Color(0xFFE8F0E9),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1.5,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: SvgPicture.asset(
+                            'assets/user_avatar.svg',
+                            colorFilter: const ColorFilter.mode(
+                              Colors.black,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                        title: const Text(
+                          'Sign In',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          final user = await AuthService.signInWithGoogle();
+                          if (user != null && context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const ProfileScreen()),
+                            );
+                          }
+                        },
+                      ),
               ),
-            ),
             ),
           ],
         ),
       ),
+
       appBar: AppBar(
         leading: Builder(
           builder: (context) => IconButton(
