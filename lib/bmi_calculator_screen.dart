@@ -20,20 +20,95 @@ class BMICalculatorScreen extends StatefulWidget {
 
 class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
   final TextEditingController _weightController = TextEditingController();
+  final FocusNode _weightFocusNode = FocusNode();
+  bool _weightHasError = false;
   String _weightUnit = 'kg';
 
   final TextEditingController _heightMeterController = TextEditingController();
   final TextEditingController _heightCmController = TextEditingController();
   final TextEditingController _heightFeetController = TextEditingController();
   final TextEditingController _heightInchController = TextEditingController();
+  final FocusNode _heightMeterFocusNode = FocusNode();
+  final FocusNode _heightCmFocusNode = FocusNode();
+  final FocusNode _heightFeetFocusNode = FocusNode();
+  bool _heightHasError = false;
   String _heightUnit = 'cm';
 
   double? _bmi;
   String _category = '';
   Color _categoryColor = Colors.grey;
 
+  @override
+  void initState() {
+    super.initState();
+    // Weight focus হারালে red border সরাও
+    _weightFocusNode.addListener(() {
+      if (!_weightFocusNode.hasFocus && _weightHasError) {
+        setState(() => _weightHasError = false);
+      }
+    });
+    // Height focus হারালে red border সরাও
+    void clearHeightError() {
+      if (_heightHasError) setState(() => _heightHasError = false);
+    }
+    _heightMeterFocusNode.addListener(() {
+      if (!_heightMeterFocusNode.hasFocus) clearHeightError();
+    });
+    _heightCmFocusNode.addListener(() {
+      if (!_heightCmFocusNode.hasFocus) clearHeightError();
+    });
+    _heightFeetFocusNode.addListener(() {
+      if (!_heightFeetFocusNode.hasFocus) clearHeightError();
+    });
+  }
+
+  // খালি field-এ focus করার helper
+  void _focusField(FocusNode focusNode) {
+    FocusScope.of(context).requestFocus(focusNode);
+  }
+
+  bool _isHeightEmpty() {
+    if (_heightUnit == 'm') return _heightMeterController.text.isEmpty;
+    if (_heightUnit == 'cm') return _heightCmController.text.isEmpty;
+    return _heightFeetController.text.isEmpty;
+  }
+
+  void _focusHeightField() {
+    if (_heightUnit == 'm') {
+      _focusField(_heightMeterFocusNode);
+    } else if (_heightUnit == 'cm') {
+      _focusField(_heightCmFocusNode);
+    } else {
+      _focusField(_heightFeetFocusNode);
+    }
+  }
+
   void _calculateBMI() {
-    // Keyboard dismiss করো এবং সব input field unfocus করো
+    final weightEmpty = _weightController.text.isEmpty;
+    final heightEmpty = _isHeightEmpty();
+
+    // দুটোই খালি → weight-এ focus + red border
+    if (weightEmpty && heightEmpty) {
+      setState(() { _weightHasError = true; _heightHasError = false; });
+      _focusField(_weightFocusNode);
+      return;
+    }
+
+    // শুধু weight খালি → weight-এ focus + red border
+    if (weightEmpty) {
+      setState(() { _weightHasError = true; _heightHasError = false; });
+      _focusField(_weightFocusNode);
+      return;
+    }
+
+    // শুধু height খালি → height-এ focus + red border
+    if (heightEmpty) {
+      setState(() { _heightHasError = true; _weightHasError = false; });
+      _focusHeightField();
+      return;
+    }
+
+    // সব ঠিক আছে, keyboard dismiss করো
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -41,11 +116,6 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
       _category = '';
       _categoryColor = Colors.grey;
     });
-
-    if (_weightController.text.isEmpty) {
-      _showError('Please enter your weight');
-      return;
-    }
 
     double weight;
     try {
@@ -62,10 +132,6 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     double heightInMeters;
     try {
       if (_heightUnit == 'm') {
-        if (_heightMeterController.text.isEmpty) {
-          _showError('Please enter your height in meters');
-          return;
-        }
         double meters = double.parse(_heightMeterController.text);
         if (meters <= 0) {
           _showError('Height must be greater than 0');
@@ -73,10 +139,6 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
         }
         heightInMeters = meters;
       } else if (_heightUnit == 'cm') {
-        if (_heightCmController.text.isEmpty) {
-          _showError('Please enter your height in centimeters');
-          return;
-        }
         double cm = double.parse(_heightCmController.text);
         if (cm <= 0) {
           _showError('Height must be greater than 0');
@@ -86,11 +148,6 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
       } else {
         String feetText = _heightFeetController.text;
         String inchText = _heightInchController.text;
-
-        if (feetText.isEmpty && inchText.isEmpty) {
-          _showError('Please enter your height in feet and/or inches');
-          return;
-        }
 
         double feet = feetText.isNotEmpty ? double.parse(feetText) : 0;
         double inches = inchText.isNotEmpty ? double.parse(inchText) : 0;
@@ -362,10 +419,14 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                     flex: 3,
                     child: TextField(
                       controller: _weightController,
+                      focusNode: _weightFocusNode,
                       keyboardType: TextInputType.numberWithOptions(
                         decimal: true,
                       ),
                       style: const TextStyle(fontSize: 14),
+                      onChanged: (_) {
+                        if (_weightHasError) setState(() => _weightHasError = false);
+                      },
                       decoration: InputDecoration(
                         labelText: 'Enter weight',
                         contentPadding: const EdgeInsets.symmetric(
@@ -375,6 +436,26 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
+                        enabledBorder: _weightHasError
+                            ? OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: const BorderSide(color: Colors.red, width: 2),
+                              )
+                            : OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                        focusedBorder: _weightHasError
+                            ? OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: const BorderSide(color: Colors.red, width: 2),
+                              )
+                            : OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 2,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -423,8 +504,12 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                 height: 48,
                 child: TextField(
                   controller: _heightMeterController,
+                  focusNode: _heightMeterFocusNode,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   style: const TextStyle(fontSize: 14),
+                  onChanged: (_) {
+                    if (_heightHasError) setState(() => _heightHasError = false);
+                  },
                   decoration: InputDecoration(
                     labelText: 'Enter height in meters',
                     contentPadding: const EdgeInsets.symmetric(
@@ -434,6 +519,24 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
+                    enabledBorder: _heightHasError
+                        ? OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(color: Colors.red, width: 2),
+                          )
+                        : OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                    focusedBorder: _heightHasError
+                        ? OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(color: Colors.red, width: 2),
+                          )
+                        : OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -442,8 +545,12 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                 height: 48,
                 child: TextField(
                   controller: _heightCmController,
+                  focusNode: _heightCmFocusNode,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   style: const TextStyle(fontSize: 14),
+                  onChanged: (_) {
+                    if (_heightHasError) setState(() => _heightHasError = false);
+                  },
                   decoration: InputDecoration(
                     labelText: 'Enter height in centimeters',
                     contentPadding: const EdgeInsets.symmetric(
@@ -453,6 +560,24 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
+                    enabledBorder: _heightHasError
+                        ? OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(color: Colors.red, width: 2),
+                          )
+                        : OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                    focusedBorder: _heightHasError
+                        ? OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(color: Colors.red, width: 2),
+                          )
+                        : OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -464,10 +589,14 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                       height: 48,
                       child: TextField(
                         controller: _heightFeetController,
+                        focusNode: _heightFeetFocusNode,
                         keyboardType: TextInputType.numberWithOptions(
                           decimal: true,
                         ),
                         style: const TextStyle(fontSize: 14),
+                        onChanged: (_) {
+                          if (_heightHasError) setState(() => _heightHasError = false);
+                        },
                         decoration: InputDecoration(
                           labelText: 'Feet',
                           contentPadding: const EdgeInsets.symmetric(
@@ -477,6 +606,24 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
+                          enabledBorder: _heightHasError
+                              ? OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: const BorderSide(color: Colors.red, width: 2),
+                                )
+                              : OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                          focusedBorder: _heightHasError
+                              ? OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: const BorderSide(color: Colors.red, width: 2),
+                                )
+                              : OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 2,
+                                  ),
+                                ),
                         ),
                       ),
                     ),
@@ -603,9 +750,13 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
   @override
   void dispose() {
     _weightController.dispose();
+    _weightFocusNode.dispose();
     _heightMeterController.dispose();
+    _heightMeterFocusNode.dispose();
     _heightCmController.dispose();
+    _heightCmFocusNode.dispose();
     _heightFeetController.dispose();
+    _heightFeetFocusNode.dispose();
     _heightInchController.dispose();
     super.dispose();
   }
