@@ -228,132 +228,179 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? AppTheme.darkSurfaceColor
-                    : Theme.of(context).primaryColor,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
+            // ── Scrollable menu area ──────────────────────────
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: SvgPicture.asset(
-                      'assets/svgviewer-output.svg',
-                      width: 64,
-                      height: 64,
+                  DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppTheme.darkSurfaceColor
+                          : Theme.of(context).primaryColor,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: SvgPicture.asset(
+                            'assets/svgviewer-output.svg',
+                            width: 64,
+                            height: 64,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'BMI Calculator',
+                          style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? AppTheme.primaryColor
+                                : Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'v1.0.0',
+                          style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? AppTheme.primaryColor.withValues(alpha: 0.7)
+                                : Colors.black54,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'BMI Calculator',
-                    style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? AppTheme.primaryColor
-                          : Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  ListTile(
+                    leading: SvgPicture.asset('assets/home.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
+                    title: const Text('Home'),
+                    onTap: () => Navigator.pop(context),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'v1.0.0',
-                    style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? AppTheme.primaryColor.withValues(alpha: 0.7)
-                          : Colors.black54,
-                      fontSize: 14,
-                    ),
+                  ListTile(
+                    leading: Icon(Icons.menu_book_rounded, color: Theme.of(context).iconTheme.color ?? Colors.white),
+                    title: const Text('What is BMI?'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const WhatIsBMIScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: SvgPicture.asset('assets/about.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
+                    title: const Text('About App'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AboutScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: SvgPicture.asset('assets/privacy.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
+                    title: const Text('Privacy Policy'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PrivacyPolicyScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: SvgPicture.asset('assets/share.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
+                    title: const Text('Share App'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Share.share(
+                        'Check out BMI Calculator - a simple app to calculate your Body Mass Index!\n\nhttps://play.google.com/store/apps/details?id=com.farhan.bmicalculator',
+                        subject: 'BMI Calculator App',
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: SvgPicture.asset('assets/star.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
+                    title: const Text('Rate Us'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      launchUrl(
+                        Uri.parse(
+                          'https://play.google.com/store/apps/details?id=com.farhan.bmicalculator',
+                        ),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.group_outlined, color: Theme.of(context).iconTheme.color ?? Colors.white),
+                    title: const Text('About Us'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AboutUsScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
-            ListTile(
-              leading: SvgPicture.asset('assets/home.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
-              title: const Text('Home'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: Icon(Icons.menu_book_rounded, color: Theme.of(context).iconTheme.color ?? Colors.white),
-              title: const Text('What is BMI?'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const WhatIsBMIScreen(),
+            // ── Sign In pinned at the very bottom ─────────────
+            const Divider(height: 1),
+            SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF2A2A2A)
+                        : const Color(0xFFE8F0E9),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 1.5,
+                    ),
                   ),
-                );
-              },
-            ),
-            ListTile(
-              leading: SvgPicture.asset('assets/about.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
-              title: const Text('About App'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AboutScreen(),
+                  padding: const EdgeInsets.all(6),
+                  child: SvgPicture.asset(
+                    'assets/user_avatar.svg',
+                    colorFilter: const ColorFilter.mode(
+                      Colors.black,
+                      BlendMode.srcIn,
+                    ),
                   ),
-                );
-              },
+                ),
+                title: const Text(
+                  'Sign In',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  // TODO: Navigate to Sign In screen
+                },
+              ),
             ),
-            const Divider(),
-            ListTile(
-              leading: SvgPicture.asset('assets/privacy.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
-              title: const Text('Privacy Policy'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const PrivacyPolicyScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: SvgPicture.asset('assets/share.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
-              title: const Text('Share App'),
-              onTap: () {
-                Navigator.pop(context);
-                Share.share(
-                  'Check out BMI Calculator - a simple app to calculate your Body Mass Index!\n\nhttps://play.google.com/store/apps/details?id=com.farhan.bmicalculator',
-                  subject: 'BMI Calculator App',
-                );
-              },
-            ),
-            ListTile(
-              leading: SvgPicture.asset('assets/star.svg', width: 24, height: 24, colorFilter: ColorFilter.mode(Theme.of(context).iconTheme.color ?? Colors.white, BlendMode.srcIn)),
-              title: const Text('Rate Us'),
-              onTap: () {
-                Navigator.pop(context);
-                launchUrl(
-                  Uri.parse(
-                    'https://play.google.com/store/apps/details?id=com.farhan.bmicalculator',
-                  ),
-                  mode: LaunchMode.externalApplication,
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.group_outlined, color: Theme.of(context).iconTheme.color ?? Colors.white),
-              title: const Text('About Us'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AboutUsScreen(),
-                  ),
-                );
-              },
             ),
           ],
         ),
