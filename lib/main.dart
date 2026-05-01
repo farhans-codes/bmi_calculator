@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bmi_calculator/app_theme.dart';
 import 'package:bmi_calculator/bmi_calculator_screen.dart';
+import 'package:bmi_calculator/bloc/theme_cubit.dart';
+import 'package:bmi_calculator/bloc/auth_cubit.dart';
 
 void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -17,31 +20,28 @@ void main() async {
   runApp(const BMICalculatorApp());
 }
 
-class BMICalculatorApp extends StatefulWidget {
+class BMICalculatorApp extends StatelessWidget {
   const BMICalculatorApp({super.key});
 
   @override
-  State<BMICalculatorApp> createState() => _BMICalculatorAppState();
-}
-
-class _BMICalculatorAppState extends State<BMICalculatorApp> {
-  bool _isDarkMode = false;
-
-  void _toggleTheme() {
-    setState(() {
-      _isDarkMode = !_isDarkMode;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'BMI Calculator',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: BMICalculatorScreen(onThemeToggle: _toggleTheme),
-      debugShowCheckedModeBanner: false,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(create: (_) => AuthCubit()),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeState>(
+        builder: (context, themeState) {
+          return MaterialApp(
+            title: 'BMI Calculator',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            home: const BMICalculatorScreen(),
+            debugShowCheckedModeBanner: false,
+          );
+        },
+      ),
     );
   }
 }

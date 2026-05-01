@@ -3,33 +3,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:bmi_calculator/auth_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bmi_calculator/bloc/auth_cubit.dart';
+import 'package:bmi_calculator/bloc/history_bloc.dart';
 import 'package:bmi_calculator/firestore_service.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => HistoryBloc()..add(const LoadStats()),
+      child: const _ProfileScreenBody(),
+    );
+  }
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  int _statMonths = 1;
-  List<Map<String, dynamic>> _statsData = [];
-  bool _statsLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStats();
-  }
-
-  Future<void> _loadStats() async {
-    setState(() => _statsLoading = true);
-    final from = DateTime.now().subtract(Duration(days: _statMonths * 30));
-    final data = await FirestoreService.getRecordsForStats(from);
-    if (mounted) setState(() { _statsData = data; _statsLoading = false; });
-  }
+class _ProfileScreenBody extends StatelessWidget {
+  const _ProfileScreenBody();
 
   Color _categoryColor(String category) {
     switch (category) {
@@ -54,29 +46,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return sortedKeys.take(3).map((k) => byDay[k]!).toList();
   }
 
-  List<_MonthPoint> _buildMonthPoints() {
-    if (_statsData.isEmpty) return [];
-    final Map<String, List<Map<String, dynamic>>> byMonth = {};
-    for (final rec in _statsData) {
-      final ts = rec['createdAt'] as Timestamp?;
-      if (ts == null) continue;
-      final key = DateFormat('yyyy-MM').format(ts.toDate());
-      byMonth.putIfAbsent(key, () => []).add(rec);
-    }
-    final sortedKeys = byMonth.keys.toList()..sort();
-    return sortedKeys.map((key) {
-      final entries = byMonth[key]!;
-      double avg(List<double> vals) => vals.reduce((a, b) => a + b) / vals.length;
-      final label = DateFormat('MMM yy').format(DateFormat('yyyy-MM').parse(key));
-      return _MonthPoint(
-        label: label,
-        bmi:    avg(entries.map((e) => (e['bmi']    as num).toDouble()).toList()),
-        weight: avg(entries.map((e) => (e['weight'] as num).toDouble()).toList()),
-        height: avg(entries.map((e) => (e['height'] as num).toDouble()).toList()),
-      );
-    }).toList();
-  }
-
   Future<void> _handleSignOut(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -92,14 +61,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
     if (confirmed == true) {
-      await AuthService.signOut();
+      if (!context.mounted) return;
+      await context.read<AuthCubit>().signOut();
       if (context.mounted) Navigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = AuthService.currentUser;
+    final user = context.watch<AuthCubit>().state.user;
     if (user == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pop(context));
       return const SizedBox.shrink();
@@ -200,8 +170,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                             if (confirmed == true) {
-                              await FirestoreService.deleteAllRecords();
-                              _loadStats();
+                              if (context.mounted) {
+                                context.read<HistoryBloc>().add(DeleteAllRecords());
+                              }
                             }
                           },
                           icon: const Icon(Icons.delete_sweep_outlined, color: Colors.red, size: 18),
@@ -240,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       (context, index) {
                         if (index.isOdd) return const SizedBox(height: 8);
                         final doc = displayDocs[index ~/ 2];
-                        return _buildHistoryCard(doc);
+                        return _buildHistoryCard(context, doc);
                       },
                       childCount: displayDocs.length * 2 - 1,
                     ),
@@ -264,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _buildFilterChips(),
+                  child: _buildFilterChips(context),
                 ),
               ),
 
@@ -274,7 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _buildStatsCard(),
+                  child: _buildStatsCard(context),
                 ),
               ),
 
@@ -286,7 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildHistoryCard(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+  Widget _buildHistoryCard(BuildContext context, QueryDocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data();
     final bmi        = (data['bmi'] as num).toDouble();
     final weight     = (data['weight'] as num).toDouble();
@@ -309,7 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         decoration: BoxDecoration(color: Colors.red.shade400, borderRadius: BorderRadius.circular(12)),
         child: const Icon(Icons.delete_outline, color: Colors.white, size: 28),
       ),
-      onDismissed: (_) { FirestoreService.deleteRecord(doc.id); _loadStats(); },
+      onDismissed: (_) => context.read<HistoryBloc>().add(DeleteRecord(doc.id)),
       child: Card(
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -344,7 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               IconButton(
                 icon: Icon(Icons.delete_outline, color: Colors.grey.shade400, size: 22),
-                onPressed: () { FirestoreService.deleteRecord(doc.id); _loadStats(); },
+                onPressed: () => context.read<HistoryBloc>().add(DeleteRecord(doc.id)),
               ),
             ],
           ),
@@ -353,88 +324,116 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildFilterChips() {
+  Widget _buildFilterChips(BuildContext context) {
     const options = [
       (label: '1 Month', months: 1),
       (label: '6 Months', months: 6),
       (label: '1 Year', months: 12),
     ];
     final primaryColor = Theme.of(context).colorScheme.primary;
-    return Row(
-      children: options.map((opt) {
-        final selected = _statMonths == opt.months;
-        return Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: GestureDetector(
-            onTap: () { if (!selected) { setState(() => _statMonths = opt.months); _loadStats(); } },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: selected ? primaryColor : Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: selected ? primaryColor : Colors.grey.shade300),
+
+    return BlocBuilder<HistoryBloc, HistoryState>(
+      buildWhen: (prev, curr) => prev.statMonths != curr.statMonths,
+      builder: (context, state) {
+        return Row(
+          children: options.map((opt) {
+            final selected = state.statMonths == opt.months;
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
+                onTap: () {
+                  if (!selected) {
+                    context.read<HistoryBloc>().add(ChangeFilter(opt.months));
+                  }
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: selected ? primaryColor.withValues(alpha: 0.12) : Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: selected ? primaryColor : Colors.grey.shade300, width: 1.5),
+                  ),
+                  child: Text(opt.label,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                        color: selected ? primaryColor : Colors.grey.shade600,
+                      )),
+                ),
               ),
-              child: Text(opt.label,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-                    color: selected ? Colors.black : Colors.grey.shade700,
-                  )),
-            ),
-          ),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
 
-  Widget _buildStatsCard() {
-    if (_statsLoading) {
-      return const SizedBox(height: 220, child: Center(child: CircularProgressIndicator()));
-    }
-    final points = _buildMonthPoints();
-    if (points.isEmpty) {
-      return Container(
-        height: 220,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200),
-        ),
-        child: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Icon(Icons.insert_chart_outlined_rounded, size: 52, color: Colors.grey.shade300),
-            const SizedBox(height: 12),
-            Text('Not enough data yet',
-                style: TextStyle(fontSize: 15, color: Colors.grey.shade500, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            Text('Keep calculating your BMI\nto see trends here',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade400)),
-          ]),
-        ),
-      );
-    }
-    return _StatisticsCard(points: points, months: _statMonths);
+  Widget _buildStatsCard(BuildContext context) {
+    return BlocBuilder<HistoryBloc, HistoryState>(
+      builder: (context, state) {
+        if (state.statsLoading && state.statsData.isEmpty) {
+          return const SizedBox(height: 240, child: Center(child: CircularProgressIndicator()));
+        }
+        final points = state.chartPoints;
+        if (points.isEmpty) {
+          return Container(
+            height: 240,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Center(
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(Icons.insert_chart_outlined_rounded, size: 52, color: Colors.grey.shade300),
+                const SizedBox(height: 12),
+                Text('Not enough data yet',
+                    style: TextStyle(fontSize: 15, color: Colors.grey.shade500, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 6),
+                Text('Keep calculating your BMI\nto see trends here',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade400)),
+              ]),
+            ),
+          );
+        }
+        return AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          child: Stack(
+            children: [
+              StatisticsCard(points: points, months: state.statMonths),
+              if (state.statsLoading)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
 // ─────────────────────────────────────────────────────────────
-// Statistics Card (shared logic — same as history_screen)
+// Statistics Card — Grouped Bar Chart (shared widget)
 // ─────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────
-// Statistics Card — Grouped Bar Chart
-// ─────────────────────────────────────────────────────────────
-class _StatisticsCard extends StatefulWidget {
-  final List<_MonthPoint> points;
+class StatisticsCard extends StatefulWidget {
+  final List<ChartPoint> points;
   final int months;
-  const _StatisticsCard({required this.points, required this.months});
+  const StatisticsCard({super.key, required this.points, required this.months});
 
   @override
-  State<_StatisticsCard> createState() => _StatisticsCardState();
+  State<StatisticsCard> createState() => _StatisticsCardState();
 }
 
-class _StatisticsCardState extends State<_StatisticsCard> {
+class _StatisticsCardState extends State<StatisticsCard> {
   int? _touchedGroup;
 
   static const _bmiColor    = Color(0xFF317eb6);
@@ -584,15 +583,4 @@ class _StatisticsCardState extends State<_StatisticsCard> {
       ],
     ]);
   }
-}
-
-// ─────────────────────────────────────────────────────────────
-// Data model
-// ─────────────────────────────────────────────────────────────
-class _MonthPoint {
-  final String label;
-  final double bmi;
-  final double weight;
-  final double height;
-  const _MonthPoint({required this.label, required this.bmi, required this.weight, required this.height});
 }
