@@ -50,6 +50,8 @@ class ClearWeightError extends BmiCalculatorEvent {}
 
 class ClearHeightError extends BmiCalculatorEvent {}
 
+class ClearFocusRequest extends BmiCalculatorEvent {}
+
 // ─── State ──────────────────────────────────────────────────
 class BmiCalculatorState extends Equatable {
   final String weightUnit;
@@ -123,6 +125,7 @@ class BmiCalculatorBloc extends Bloc<BmiCalculatorEvent, BmiCalculatorState> {
     on<ClearAll>(_onClearAll);
     on<ClearWeightError>(_onClearWeightError);
     on<ClearHeightError>(_onClearHeightError);
+    on<ClearFocusRequest>(_onClearFocusRequest);
   }
 
   void _onWeightUnitChanged(WeightUnitChanged event, Emitter<BmiCalculatorState> emit) {
@@ -147,11 +150,17 @@ class BmiCalculatorBloc extends Bloc<BmiCalculatorEvent, BmiCalculatorState> {
   }
 
   void _onClearWeightError(ClearWeightError event, Emitter<BmiCalculatorState> emit) {
-    if (state.weightHasError) emit(state.copyWith(weightHasError: false));
+    if (state.weightHasError) emit(state.copyWith(weightHasError: false, clearFocus: true));
   }
 
   void _onClearHeightError(ClearHeightError event, Emitter<BmiCalculatorState> emit) {
-    if (state.heightHasError) emit(state.copyWith(heightHasError: false));
+    if (state.heightHasError) emit(state.copyWith(heightHasError: false, clearFocus: true));
+  }
+
+  void _onClearFocusRequest(ClearFocusRequest event, Emitter<BmiCalculatorState> emit) {
+    if (state.focusRequest != null) {
+      emit(state.copyWith(clearFocus: true));
+    }
   }
 
   void _onCalculateBmi(CalculateBmi event, Emitter<BmiCalculatorState> emit) {

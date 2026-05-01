@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bmi_calculator/app_theme.dart';
 import 'package:bmi_calculator/about_screen.dart';
@@ -121,10 +122,14 @@ class _BMICalculatorScreenBodyState extends State<_BMICalculatorScreenBody> {
         // Handle focus requests
         if (state.focusRequest == 'weight') {
           _focusField(_weightFocusNode);
+          context.read<BmiCalculatorBloc>().add(ClearFocusRequest());
         } else if (state.focusRequest == 'height') {
           _focusHeightField(state.heightUnit);
+          context.read<BmiCalculatorBloc>().add(ClearFocusRequest());
         } else if (state.focusRequest == 'unfocus') {
-          FocusScope.of(context).unfocus();
+          FocusManager.instance.primaryFocus?.unfocus();
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+          context.read<BmiCalculatorBloc>().add(ClearFocusRequest());
         }
 
         // Handle error messages
@@ -144,6 +149,10 @@ class _BMICalculatorScreenBodyState extends State<_BMICalculatorScreenBody> {
 
   Widget _buildScaffold(BuildContext context) {
     return Scaffold(
+      onDrawerChanged: (isOpened) {
+        FocusManager.instance.primaryFocus?.unfocus();
+        SystemChannels.textInput.invokeMethod('TextInput.hide');
+      },
       drawer: _buildDrawer(context),
       appBar: AppBar(
         leading: Builder(
@@ -158,7 +167,8 @@ class _BMICalculatorScreenBodyState extends State<_BMICalculatorScreenBody> {
               ),
             ),
             onPressed: () {
-              FocusScope.of(context).unfocus();
+              FocusManager.instance.primaryFocus?.unfocus();
+              SystemChannels.textInput.invokeMethod('TextInput.hide');
               Scaffold.of(context).openDrawer();
             },
           ),
@@ -187,7 +197,10 @@ class _BMICalculatorScreenBodyState extends State<_BMICalculatorScreenBody> {
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => FocusScope.of(context).unfocus(),
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+        },
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: BlocBuilder<BmiCalculatorBloc, BmiCalculatorState>(
